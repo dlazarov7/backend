@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, ManyToOne} from "typeorm"
-import { Teams } from "./Teams";
+import { Teams } from "./Team";
 
 
 @Entity()

@@ -1,8 +1,8 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { Employees } from "./entity/Employees"
-import { Teams } from "./entity/Teams"
-import { Companies } from "./entity/Companies"
+import { Employees } from "./entity/Employee"
+import { Teams } from "./entity/Team"
+import { Companies } from "./entity/Company"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -13,7 +13,8 @@ export const AppDataSource = new DataSource({
     database: "company-teams-management",
     synchronize: true,
     logging: false,
-    entities: [Employees,Teams,Companies],
-    migrations: [],
+    entities: [Employees, Teams, Companies],
+    migrations: ["src/migratins/*.ts"],
+    migrationsTableName: "migrations",
     subscribers: [],
 })
