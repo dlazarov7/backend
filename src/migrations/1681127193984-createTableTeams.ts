@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm"
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm"
 
 export class Teams1681127193984 implements MigrationInterface {
 
@@ -10,38 +10,41 @@ export class Teams1681127193984 implements MigrationInterface {
                     columns: [
                         {
                             name: "id",
-                            type: "string",
+                            type: "int",
                             isGenerated: true,
                             generationStrategy: "increment",
                             isPrimary: true
                         },
                         {
                             name: "company_id",
-                            type: "number",
-                            foreignKeyConstraintName: "company_id_fk"
+                            type: "int",
+                            //foreignKeyConstraintName: "company_id_fk"
 
                         },
                         {
                             name: "name",
-                            type: "string"
+                            type: "varchar"
                         },
                         {
                             name: "department",
-                            type: "string",
+                            type: "varchar",
                         },
                         {
                             name: "description",
-                            type: "string",
+                            type: "varchar",
                             isNullable: true
                         }
 
                     ]
                 })
         )
+     
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("teams",true)
+        const table = await queryRunner.getTable("teams");
+        await queryRunner.dropForeignKeys(table,table.foreignKeys);
+        await queryRunner.dropTable(table, true);
     }
 
 }

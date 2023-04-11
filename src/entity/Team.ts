@@ -1,4 +1,4 @@
-import {  Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany} from "typeorm";
+import {  Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany, JoinColumn} from "typeorm";
 import { Employees } from "./Employee";
 import { Companies } from "./Company";
 
@@ -24,5 +24,8 @@ export class Teams extends BaseEntity{
     employee:Employees
 
     @ManyToOne(()=>Companies,(company)=>company.id)
+    @JoinColumn({
+        name:"company_id"
+    })
     company:Companies
 }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, ManyToOne} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, ManyToOne, JoinColumn} from "typeorm"
 import { Teams } from "./Team";
 
 
@@ -11,7 +11,9 @@ export class Employees extends BaseEntity {
     @Column()
     manager_id: number
 
-    @Column()
+    @Column({
+       // foreignKeyConstraintName:"team_id"
+    })
     team_id:number
     
     @Column()
@@ -37,7 +39,7 @@ export class Employees extends BaseEntity {
     salary: number
 
     @CreateDateColumn()
-    createdDate: Date
+    startDate: Date
 
     @Column({
         nullable: true
@@ -45,6 +47,9 @@ export class Employees extends BaseEntity {
     endDate: Date
 
     @ManyToOne(()=> Teams,(team) =>team.id)
+    @JoinColumn({
+        name:"team_id"
+    })
     team: Teams
 
 }

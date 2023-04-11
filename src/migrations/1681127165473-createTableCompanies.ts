@@ -10,19 +10,19 @@ export class Companies1681127165473 implements MigrationInterface {
                     columns:[
                         {
                             name:"id",
-                            type:"number",
+                            type:"int",
                             isPrimary:true,
                             isGenerated:true,
                             generationStrategy:"increment"
                         },
                         {
                             name:"name",
-                            type:"string",
+                            type:"varchar",
                             isUnique:true
                         },
                         {
                             name:"country",
-                            type:"string"
+                            type:"varchar"
                         }
                     ]
                 }
