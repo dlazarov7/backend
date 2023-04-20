@@ -1,6 +1,5 @@
 import * as express from "express";
 import { CompanyService } from "../services/CompanyService";
-import exp from "constants";
 export class CompanyControler {
 
     router: express.Router;
