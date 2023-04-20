@@ -1,8 +1,8 @@
 import {  Entity, PrimaryGeneratedColumn, Column, BaseEntity} from "typeorm";
 //import { Teams } from "./Teams";
 
-@Entity()
-export class Companies extends BaseEntity{
+@Entity({name:"companies"})
+export class Company extends BaseEntity{
 
     @PrimaryGeneratedColumn()
     id:number

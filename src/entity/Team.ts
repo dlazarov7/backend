@@ -1,9 +1,9 @@
 import {  Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, OneToMany, JoinColumn} from "typeorm";
-import { Employees } from "./Employee";
-import { Companies } from "./Company";
+import { Employee } from "./Employee";
+import { Company } from "./Company";
 
-@Entity()
-export class Teams extends BaseEntity{
+@Entity({name:"teams"})
+export class Team extends BaseEntity{
 
     @PrimaryGeneratedColumn()
     id:number
@@ -15,17 +15,17 @@ export class Teams extends BaseEntity{
     name:string
 
     @Column()
-    department:number
+    department:string
 
     @Column()
     description:string
 
-    @OneToMany(()=>Employees, (employee) =>employee.team_id)
-    employee:Employees
+    @OneToMany(()=>Employee, (employee) =>employee.team_id)
+    employee:Employee
 
-    @ManyToOne(()=>Companies,(company)=>company.id)
+    @ManyToOne(()=>Company,(company)=>company.id)
     @JoinColumn({
         name:"company_id"
     })
-    company:Companies
+    company:Company
 }

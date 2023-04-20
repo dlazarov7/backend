@@ -13,6 +13,7 @@
    },
    "dependencies": {
       "express": "^4.18.2",
+      "express-promise-router": "^4.1.1",
       "ormconfig.json": "^1.0.2",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.13",

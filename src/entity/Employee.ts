@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, ManyToOne, JoinColumn} from "typeorm"
-import { Teams } from "./Team";
+import { Team } from "./Team";
 
 
-@Entity()
-export class Employees extends BaseEntity {
+@Entity({name:"employees"})
+export class Employee extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id: number
@@ -46,10 +46,10 @@ export class Employees extends BaseEntity {
     })
     endDate: Date
 
-    @ManyToOne(()=> Teams,(team) =>team.id)
+    @ManyToOne(()=> Team,(team) =>team.id)
     @JoinColumn({
         name:"team_id"
     })
-    team: Teams
+    team: Team
 
 }
