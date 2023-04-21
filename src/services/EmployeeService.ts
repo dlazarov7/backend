@@ -119,7 +119,7 @@ export class EmployeeService {
             .innerJoin("emps.team", 'team')
             .select(`team.name`)
             .addSelect(`concat("first_name"||' '||"last_name") AS "fullName"`)
-            .addSelect(`'id: '||emps.id`)
+            .addSelect(`emps.id`)
             .addSelect('"manager_id"')
             .where('team.name=:name', { name: teamName })
             .groupBy("team.name")
