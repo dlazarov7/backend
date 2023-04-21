@@ -1,26 +1,32 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, ManyToOne, JoinColumn} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, ManyToOne, JoinColumn } from "typeorm"
 import { Team } from "./Team";
 
 
-@Entity({name:"employees"})
+@Entity({ name: "employees" })
 export class Employee extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
-    manager_id: number
+    @Column({
+        name: "manager_id"
+    })
+    managerId: number
 
     @Column({
-       // foreignKeyConstraintName:"team_id"
+        name: "team_id"
     })
-    team_id:number
-    
-    @Column()
-    first_name: string
+    teamId: number
 
-    @Column()
-    last_name: string
+    @Column({
+        name: "first_name"
+    })
+    firstName: string
+
+    @Column({
+        name: "last_name"
+    })
+    lastName: string
 
     @Column({
         unique: true
@@ -46,9 +52,9 @@ export class Employee extends BaseEntity {
     })
     endDate: Date
 
-    @ManyToOne(()=> Team,(team) =>team.id)
+    @ManyToOne(() => Team, (team) => team.id)
     @JoinColumn({
-        name:"team_id"
+        name: "team_id"
     })
     team: Team
 

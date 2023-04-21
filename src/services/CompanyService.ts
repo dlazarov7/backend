@@ -1,5 +1,5 @@
 import { AppDataSource } from "../data-source";
-import { Company } from "../entity/Company";
+import { Company } from "../models/Company";
 
 
 export class CompanyService {

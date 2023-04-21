@@ -1,5 +1,5 @@
 import { AppDataSource } from "../data-source";
-import { Employee } from "../entity/Employee";
+import { Employee } from "../models/Employee";
 
 
 export class EmployeeService {
@@ -33,10 +33,10 @@ export class EmployeeService {
             .createQueryBuilder()
             .update()
             .set({
-                manager_id: managerId,
-                team_id: teamId,
-                first_name: firstName,
-                last_name: lastName,
+                managerId: managerId,
+                teamId: teamId,
+                firstName: firstName,
+                lastName: lastName,
                 username: username,
                 email: email,
                 position: position,
@@ -65,10 +65,10 @@ export class EmployeeService {
             .insert()
             .into(Employee)
             .values({
-                manager_id: managerId,
-                team_id: teamId,
-                first_name: firstName,
-                last_name: lastName,
+                managerId: managerId,
+                teamId: teamId,
+                firstName: firstName,
+                lastName: lastName,
                 username: username,
                 email: email,
                 position: position,

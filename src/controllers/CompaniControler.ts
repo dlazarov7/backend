@@ -13,7 +13,7 @@ export class CompanyControler {
         this.router.get("/getCompanyByid", this.getCompanyById);
         this.router.post("/addCompany", this.addCompany);
         this.router.put("/editCompany", this.editCompany);
-        this.router.delete("/company/delete",this.deleteCompany);
+        this.router.delete("/company/delete", this.deleteCompany);
     }
 
     deleteCompany = async (req: express.Request, res: express.Response) => {
@@ -27,9 +27,9 @@ export class CompanyControler {
 
     editCompany = async (req: express.Request, res: express.Response) => {
         try {
-            const {  newName, newCountry } = req.body;
+            const { newName, newCountry } = req.body;
             const companyId = parseInt(req.body.companyId);
-            const editedCompany = await CompanyService.getInstance().editCompany(companyId,String(newName), String(newCountry));
+            const editedCompany = await CompanyService.getInstance().editCompany(companyId, String(newName), String(newCountry));
             res.status(200).send("Successfully edited company");
         } catch (error) {
             res.send(error);
