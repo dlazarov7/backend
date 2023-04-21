@@ -86,13 +86,13 @@ export class EmployeeService {
             .innerJoinAndSelect('emps.team', 'team')
             .innerJoinAndSelect('team.company', 'company')
             .select("emps.id")
-            .addSelect(`concat(emps.first_name||' '||emps.last_name) AS fullName`)
             .addSelect("emps.manager_id")
-            .addSelect(`count("company_id") as count`)
-            .where(`(( DATE_PART('year', CURRENT_DATE) - DATE_PART('year', "startDate")) * 12 + (DATE_PART('month', CURRENT_DATE) - DATE_PART('month', "startDate")))>=6`)
+            .addSelect(`concat(emps.first_name||' '||emps.last_name) AS fullName`)
+            .where(`(( DATE_PART('year', CURRENT_DATE) - DATE_PART('year', "startDate")) * 12 + (DATE_PART('month', CURRENT_DATE) - DATE_PART('month', "startDate")))>=6 `)
             .andWhere(`company.name=:name`, { name: companyName })
             .groupBy(`fullName`)
             .addGroupBy("emps.id")
+            //.addGroupBy(`""`)
             .getRawMany();
 
         return exp;
@@ -117,10 +117,14 @@ export class EmployeeService {
             .getRepository(Employee)
             .createQueryBuilder("emps")
             .innerJoin("emps.team", 'team')
-            .select(`team.name, STRING_AGG("first_name"||' '||"last_name"||' '||'id: '||emps.id, ', ') AS "team_mates"`)
+            .select(`team.name`)
+            .addSelect(`concat("first_name"||' '||"last_name") AS "fullName"`)
+            .addSelect(`'id: '||emps.id`)
             .addSelect('"manager_id"')
             .where('team.name=:name', { name: teamName })
             .groupBy("team.name")
+            .addGroupBy(`emps.id`)
+            .addGroupBy(`"fullName"`)
             .addGroupBy("manager_id")
             .getRawMany()
 
@@ -133,11 +137,12 @@ export class EmployeeService {
             .createQueryBuilder("emps")
             .innerJoinAndSelect('emps.team', 'team')
             .innerJoinAndSelect('team.company', 'company')
-            .select(`STRING_AGG(emps.first_name||' '||emps.last_name, ', ') AS "workers"`)
+            .select(`concat(emps.first_name||' '||emps.last_name) AS "fullName"`)
             .addSelect('"country"')
             .where(`(date_part('year', current_date) - date_part('year', emps.startDate))>10`)
             .andWhere(`company.country='Bulgaria'`)
             .groupBy(`company.country`)
+            .addGroupBy(`"fullName"`)
             .getRawMany()
 
         return filteredEmployees;
