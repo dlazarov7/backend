@@ -1,6 +1,6 @@
 import { AppDataSource } from "../data-source";
 import { Employee } from "../models/Employee";
-
+import CustomMapper from "../utilities/mapper/CustomMapper";
 
 export class EmployeeService {
 
@@ -92,7 +92,6 @@ export class EmployeeService {
             .andWhere(`company.name=:name`, { name: companyName })
             .groupBy(`fullName`)
             .addGroupBy("emps.id")
-            //.addGroupBy(`""`)
             .getRawMany();
 
         return exp;
@@ -134,18 +133,21 @@ export class EmployeeService {
     async filterEmployees() {
         const filteredEmployees = await AppDataSource
             .getRepository(Employee)
-            .createQueryBuilder("emps")
-            .innerJoinAndSelect('emps.team', 'team')
-            .innerJoinAndSelect('team.company', 'company')
-            .select(`concat(emps.first_name||' '||emps.last_name) AS "fullName"`)
-            .addSelect('"country"')
-            .where(`(date_part('year', current_date) - date_part('year', emps.startDate))>10`)
+            .createQueryBuilder("employee")
+            .innerJoin('employee.team', 'team')
+            .innerJoin('team.company', 'company')            
+            .where(`(date_part('year', current_date) - date_part('year', employee.startDate))>10`)
             .andWhere(`company.country='Bulgaria'`)
-            .groupBy(`company.country`)
-            .addGroupBy(`"fullName"`)
-            .getRawMany()
+            .getMany()
 
-        return filteredEmployees;
+        
+        let empDtos=[];
+
+        filteredEmployees.forEach(emp => {
+            let dto = CustomMapper.mapEmployeeToEmployeeDto(emp);
+            empDtos.push(dto);
+        });
+        return empDtos;
     }
 
     async getAllEmployees() {
@@ -154,7 +156,12 @@ export class EmployeeService {
             .createQueryBuilder("employee")
             .getMany();
 
-        return employees;
+        let employeeDtos = [];
+        employees.forEach(emp=>{
+            let dto=CustomMapper.mapEmployeeToEmployeeDto(emp);
+            employeeDtos.push(dto);
+        })
+        return employeeDtos;
     }
 
     async getEmployeeById(employeeId: number) {
