@@ -85,11 +85,15 @@ export class EmployeeService {
             .createQueryBuilder('emps')
             .innerJoinAndSelect('emps.team', 'team')
             .innerJoinAndSelect('team.company', 'company')
-            .select('COUNT("company_id") as emp_count')
-            .addSelect(`STRING_AGG("first_name"||' '||"last_name", ', ') AS "workers"`)
+            .select("emps.id")
+            .addSelect(`concat(emps.first_name||' '||emps.last_name) AS fullName`)
+            .addSelect("emps.manager_id")
+            .addSelect(`count("company_id") as count`)
             .where(`(( DATE_PART('year', CURRENT_DATE) - DATE_PART('year', "startDate")) * 12 + (DATE_PART('month', CURRENT_DATE) - DATE_PART('month', "startDate")))>=6`)
             .andWhere(`company.name=:name`, { name: companyName })
-            .getRawOne();
+            .groupBy(`fullName`)
+            .addGroupBy("emps.id")
+            .getRawMany();
 
         return exp;
     }
