@@ -23,11 +23,11 @@ export class Team extends BaseEntity {
     description: string
 
     @OneToMany(() => Employee, (employee) => employee.teamId)
-    employee: Employee
+    employees: Employee[];
 
     @ManyToOne(() => Company, (company) => company.id)
     @JoinColumn({
         name: "company_id"
     })
-    company: Company
+    company: Company;
 }

@@ -10,9 +10,7 @@ export default class CustomMapper {
     static mapEmployeeToEmployeeDto(employee: Employee) {
         const employeeDto = new EmployeeDto();
 
-        if (employeeDto.id) {
-            employeeDto.id = employee.id;
-        }
+        employeeDto.id = employee.id;
         employeeDto.managerId = employee.managerId;
         employeeDto.teamId = employee.teamId;
         employeeDto.firstName = employee.firstName;
@@ -23,7 +21,7 @@ export default class CustomMapper {
         employeeDto.salary = employee.salary;
         employeeDto.startDate = moment(employee.startDate).format("DD/MM/YYYY");
         employeeDto.endDate = employee.endDate ? moment(employee.endDate).format("DD/MM/YYYY") : null;
-        employeeDto.team=this.mapTeamToTeamDto(employee.team);
+        employeeDto.team = this.mapTeamToTeamDto(employee.team);
         return employeeDto;
     }
 
@@ -42,51 +40,51 @@ export default class CustomMapper {
 
         employee.endDate = employeeDto.endDate ? new Date(employeeDto.endDate) : null;
 
-        //Team..
+        employee.team = this.mapTeamDtoToTeam(employeeDto.team);
         return employee;
     }
 
-    static mapTeamToTeamDto(team:Team){
-        const teamDto= new TeamDto();
+    static mapTeamToTeamDto(team: Team) {
+        const teamDto = new TeamDto();
 
-        teamDto.id=team.id;
-        teamDto.companyId=team.companyId;
-        teamDto.name=team.name;
-        teamDto.department=team.department;
-        teamDto.description=team.description;
-        teamDto.employee=this.mapEmployeeToEmployeeDto(team.employee);
-        teamDto.company=this.mapCompanyToCompanyDto(team.company);
+        teamDto.id = team.id;
+        teamDto.companyId = team.companyId;
+        teamDto.name = team.name;
+        teamDto.department = team.department;
+        teamDto.description = team.description;
+        teamDto.employees = team.employees.map(emp=>this.mapEmployeeToEmployeeDto(emp));
+        teamDto.company = this.mapCompanyToCompanyDto(team.company);
 
         return teamDto
     }
 
-    static mapTeamDtoToTeam(teamDto:TeamDto){
+    static mapTeamDtoToTeam(teamDto: TeamDto) {
         const team = new Team();
-         team.id=teamDto.id;
-         team.companyId=teamDto.companyId;
-         team.name=teamDto.name;
-         team.department=teamDto.department;
-         team.description=teamDto.description;
-         team.employee=this.mapEmployeeDtoToEmployee(teamDto.employee);
-         team.company=this.mapCompanyDtoToCmpany(teamDto.company);
+        team.id = teamDto.id;
+        team.companyId = teamDto.companyId;
+        team.name = teamDto.name;
+        team.department = teamDto.department;
+        team.description = teamDto.description;
+        team.employees = teamDto.employees.map(emp=>this.mapEmployeeDtoToEmployee(emp));
+        team.company = this.mapCompanyDtoToCmpany(teamDto.company);
 
-         return team;
+        return team;
     }
 
-    static mapCompanyToCompanyDto(company:Company){
+    static mapCompanyToCompanyDto(company: Company) {
 
         const companyDto = new CompanyDto();
-        companyDto.id=company.id;
-        companyDto.name=company.name;
-        companyDto.country;
+        companyDto.id = company.id;
+        companyDto.name = company.name;
+        companyDto.country = company.country;
         return companyDto;
     }
 
-    static mapCompanyDtoToCmpany(companyDto:CompanyDto){
-        const company=new Company();
-        company.id=companyDto.id;
-        company.name=companyDto.name;
-        company.country=companyDto.country;
+    static mapCompanyDtoToCmpany(companyDto: CompanyDto) {
+        const company = new Company();
+        company.id = companyDto.id;
+        company.name = companyDto.name;
+        company.country = companyDto.country;
         return company
     }
 }

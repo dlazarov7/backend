@@ -1,5 +1,6 @@
 import { AppDataSource } from "../data-source";
 import { Employee } from "../models/Employee";
+import { Team } from "../models/Team";
 import CustomMapper from "../utilities/mapper/CustomMapper";
 
 export class EmployeeService {
@@ -135,13 +136,13 @@ export class EmployeeService {
             .getRepository(Employee)
             .createQueryBuilder("employee")
             .innerJoin('employee.team', 'team')
-            .innerJoin('team.company', 'company')            
+            .innerJoin('team.company', 'company')
             .where(`(date_part('year', current_date) - date_part('year', employee.startDate))>10`)
             .andWhere(`company.country='Bulgaria'`)
-            .getMany()
+            .getRawMany()
 
-        
-        let empDtos=[];
+
+        let empDtos = [];
 
         filteredEmployees.forEach(emp => {
             let dto = CustomMapper.mapEmployeeToEmployeeDto(emp);
@@ -154,11 +155,12 @@ export class EmployeeService {
         const employees = await AppDataSource
             .getRepository(Employee)
             .createQueryBuilder("employee")
+            .innerJoinAndSelect(Team, "team")
             .getMany();
 
         let employeeDtos = [];
-        employees.forEach(emp=>{
-            let dto=CustomMapper.mapEmployeeToEmployeeDto(emp);
+        employees.forEach(emp => {
+            let dto = CustomMapper.mapEmployeeToEmployeeDto(emp);
             employeeDtos.push(dto);
         })
         return employeeDtos;

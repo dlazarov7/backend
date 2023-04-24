@@ -7,6 +7,6 @@ export default class TeamDto{
     name:string;
     department:string;
     description:string;
-    employee:EmployeeDto;
+    employees:EmployeeDto[];
     company:CompanyDto;
 }

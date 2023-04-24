@@ -1,6 +1,6 @@
 import TeamDto from "./TeamDto";
 
-export default class EmloyeeDto {
+export default class EmployeeDto {
     id: number;
     managerId: number;
     teamId: number;
@@ -12,5 +12,5 @@ export default class EmloyeeDto {
     salary: number;
     startDate: string;
     endDate: string;
-    team:TeamDto
+    team:TeamDto;
 }

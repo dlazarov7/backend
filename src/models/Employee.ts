@@ -52,7 +52,7 @@ export class Employee extends BaseEntity {
     })
     endDate: Date
 
-    @ManyToOne(() => Team, (team) => team.id)
+    @ManyToOne(() => Team)
     @JoinColumn({
         name: "team_id"
     })
