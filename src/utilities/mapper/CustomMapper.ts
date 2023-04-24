@@ -52,7 +52,7 @@ export default class CustomMapper {
         teamDto.name = team.name;
         teamDto.department = team.department;
         teamDto.description = team.description;
-        teamDto.employees = team.employees.map(emp=>this.mapEmployeeToEmployeeDto(emp));
+       // teamDto.employees = team.employees.map(emp=>this.mapEmployeeToEmployeeDto(emp));
         teamDto.company = this.mapCompanyToCompanyDto(team.company);
 
         return teamDto
@@ -65,7 +65,7 @@ export default class CustomMapper {
         team.name = teamDto.name;
         team.department = teamDto.department;
         team.description = teamDto.description;
-        team.employees = teamDto.employees.map(emp=>this.mapEmployeeDtoToEmployee(emp));
+       // team.employees = teamDto.employees.map(emp=>this.mapEmployeeDtoToEmployee(emp));
         team.company = this.mapCompanyDtoToCmpany(teamDto.company);
 
         return team;

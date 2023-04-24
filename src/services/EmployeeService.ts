@@ -2,6 +2,14 @@ import { AppDataSource } from "../data-source";
 import { Employee } from "../models/Employee";
 import { Team } from "../models/Team";
 import CustomMapper from "../utilities/mapper/CustomMapper";
+import { mapper } from "../utilities/mapper/AutoMapper";
+import { createMap, forMember, mapFrom } from "@automapper/core";
+import EmployeeDto from "../dtos/EmployeeDto";
+import TeamDto from "../dtos/TeamDto";
+import CompanyDto from "../dtos/CompanyDto";
+import { Company } from "../models/Company";
+import moment from "moment";
+import { format } from "path";
 
 export class EmployeeService {
 
@@ -10,6 +18,49 @@ export class EmployeeService {
     static getInstance() {
         if (!this.instance) {
             this.instance = new EmployeeService();
+            createMap(mapper, EmployeeDto, Employee,
+                forMember(
+                    dest => dest.startDate,
+                    mapFrom(src => new Date(src.startDate))
+                ),
+                forMember(
+                    dest => dest.endDate,
+                    mapFrom(src => src.endDate ? new Date(src.endDate) : null)
+                ),
+                forMember(
+                    destination => destination.team,
+                    mapFrom(src => mapper.map(src.team, TeamDto, Team))
+                )
+
+            );
+            createMap(mapper, Employee, EmployeeDto,
+                forMember(
+                    destination => destination.fullName,
+                    mapFrom(source => `${source.firstName} ${source.lastName}`)
+                ),
+                forMember(
+                    destination => destination.startDate,
+                    mapFrom(src => moment(src.startDate).format("DD/MM/YYYY"))
+                ),
+                forMember(
+                    destination => destination.endDate,
+                    mapFrom(src => src.endDate ? moment(src.endDate).format("DD/MM/YYYY") : null)
+                ),
+                forMember(
+                    destination => destination.team,
+                    mapFrom(src => mapper.map(src.team, Team, TeamDto))
+                )
+
+
+            );
+            createMap(mapper, TeamDto, Team, forMember(
+                destination => destination.company,
+                mapFrom(src => mapper.map(src.company, Company, CompanyDto))
+            ));
+            createMap(mapper, Team, TeamDto);
+            createMap(mapper, CompanyDto, Company);
+            createMap(mapper, Company, CompanyDto);
+
         }
         return this.instance;
     }
@@ -86,16 +137,16 @@ export class EmployeeService {
             .createQueryBuilder('emps')
             .innerJoinAndSelect('emps.team', 'team')
             .innerJoinAndSelect('team.company', 'company')
-            .select("emps.id")
-            .addSelect("emps.manager_id")
-            .addSelect(`concat(emps.first_name||' '||emps.last_name) AS fullName`)
+            // .select("emps.id")
+            // .addSelect("emps.manager_id")
+            // .addSelect(`concat(emps.first_name||' '||emps.last_name) AS fullName`)
             .where(`(( DATE_PART('year', CURRENT_DATE) - DATE_PART('year', "startDate")) * 12 + (DATE_PART('month', CURRENT_DATE) - DATE_PART('month', "startDate")))>=6 `)
             .andWhere(`company.name=:name`, { name: companyName })
-            .groupBy(`fullName`)
-            .addGroupBy("emps.id")
-            .getRawMany();
+            // .groupBy(`fullName`)
+            // .addGroupBy("emps.id")
+            .getMany();
 
-        return exp;
+        return exp.map(emp=>mapper.map(emp,Employee,EmployeeDto));
     }
 
     async avgSalary() {
@@ -117,53 +168,54 @@ export class EmployeeService {
             .getRepository(Employee)
             .createQueryBuilder("emps")
             .innerJoin("emps.team", 'team')
-            .select(`team.name`)
-            .addSelect(`concat("first_name"||' '||"last_name") AS "fullName"`)
-            .addSelect(`emps.id`)
-            .addSelect('"manager_id"')
+            // .select(`team.name`)
+            // //.addSelect(`concat("first_name"||' '||"last_name") AS "fullName"`)
+            // .addSelect(`emps.id`)
+            // .addSelect('"manager_id"')
             .where('team.name=:name', { name: teamName })
-            .groupBy("team.name")
-            .addGroupBy(`emps.id`)
-            .addGroupBy(`"fullName"`)
-            .addGroupBy("manager_id")
-            .getRawMany()
+            // .groupBy("team.name")
+            // .addGroupBy(`emps.id`)
+            // //.addGroupBy(`"fullName"`)
+            // .addGroupBy("manager_id")
+            .getMany()
 
-        return team
+        return team.map(emp=>mapper.map(emp,Employee,EmployeeDto))
     }
 
-    async filterEmployees() {
+    async filterEmployees(country: string, years: number) {
         const filteredEmployees = await AppDataSource
             .getRepository(Employee)
             .createQueryBuilder("employee")
-            .innerJoin('employee.team', 'team')
-            .innerJoin('team.company', 'company')
-            .where(`(date_part('year', current_date) - date_part('year', employee.startDate))>10`)
-            .andWhere(`company.country='Bulgaria'`)
-            .getRawMany()
+            .innerJoinAndSelect('employee.team', 'team')
+            .innerJoinAndSelect('team.company', 'company')
+            .where(`(date_part('year', current_date) - date_part('year', employee.startDate))>:years`, { years: years })
+            .andWhere(`company.country=:country`, { country: country })
+            .getMany()
 
 
-        let empDtos = [];
+        // let empDtos = [];
 
-        filteredEmployees.forEach(emp => {
-            let dto = CustomMapper.mapEmployeeToEmployeeDto(emp);
-            empDtos.push(dto);
-        });
-        return empDtos;
+        // filteredEmployees.forEach(emp => {
+        //     let dto = CustomMapper.mapEmployeeToEmployeeDto(emp);
+        //     empDtos.push(dto);
+        // });
+        return filteredEmployees.map(emp => mapper.map(emp, Employee, EmployeeDto));
     }
 
     async getAllEmployees() {
         const employees = await AppDataSource
             .getRepository(Employee)
             .createQueryBuilder("employee")
-            .innerJoinAndSelect(Team, "team")
+            .innerJoinAndSelect("employee.team", "team")
+            .leftJoinAndSelect("team.company", "company")
             .getMany();
 
-        let employeeDtos = [];
-        employees.forEach(emp => {
-            let dto = CustomMapper.mapEmployeeToEmployeeDto(emp);
-            employeeDtos.push(dto);
-        })
-        return employeeDtos;
+        // let employeeDtos = [];
+        // employees.forEach(emp => {
+        //     let dto = CustomMapper.mapEmployeeToEmployeeDto(emp);
+        //     employeeDtos.push(dto);
+        // })
+        return employees.map(emp => mapper.map(emp, Employee, EmployeeDto));
     }
 
     async getEmployeeById(employeeId: number) {
@@ -172,6 +224,7 @@ export class EmployeeService {
             .createQueryBuilder("emp")
             .where('emp.id=:id', { id: employeeId })
             .getOne();
-        return employee;
+
+        return mapper.map(employee,Employee,EmployeeDto);
     }
 }

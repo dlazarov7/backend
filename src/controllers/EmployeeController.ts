@@ -10,9 +10,9 @@ export class EmployeeController {
         this.initializeRoutes();
     }
     private initializeRoutes() {
-        this.router.get("/filter-employees", this.filterEmployees);
-        this.router.get('/team-info', this.teamInfo);
-        this.router.get("/avg-salary", this.avgSalary);
+        this.router.get("/filter/employees", this.filterEmployees);
+        this.router.get('/team/info', this.teamInfo);
+        this.router.get("/avg/salary", this.avgSalary);
         this.router.get('/employees/company', this.expInCompany);
         this.router.get("/getAllEmployees", this.getAllEmployees);
         this.router.get("/getEmployeeById", this.getEmployeeById);
@@ -92,7 +92,8 @@ export class EmployeeController {
 
     filterEmployees = async (req: express.Request, res: express.Response) => {
         try {
-            const filteredEmployees = await EmployeeService.getInstance().filterEmployees();
+            const {country, years}=req.query;
+            const filteredEmployees = await EmployeeService.getInstance().filterEmployees(String(country),Number(years));
             res.status(200).send(filteredEmployees);
         } catch (error) {
             res.send(error);

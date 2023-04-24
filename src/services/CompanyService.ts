@@ -1,5 +1,8 @@
+import { createMap } from "@automapper/core";
 import { AppDataSource } from "../data-source";
 import { Company } from "../models/Company";
+import { mapper } from "../utilities/mapper/AutoMapper";
+import CompanyDto from "../dtos/CompanyDto";
 
 
 export class CompanyService {
@@ -9,6 +12,9 @@ export class CompanyService {
     static getInstance() {
         if (!this.instance) {
             this.instance = new CompanyService();
+            createMap(mapper, Company, CompanyDto);
+            createMap(mapper, CompanyDto, Company);
+
         }
         return this.instance;
     }
