@@ -1,7 +1,6 @@
 import { AppDataSource } from "../data-source";
 import { Employee } from "../models/Employee";
 import { Team } from "../models/Team";
-import CustomMapper from "../utilities/mapper/CustomMapper";
 import { mapper } from "../utilities/mapper/AutoMapper";
 import { createMap, forMember, mapFrom } from "@automapper/core";
 import EmployeeDto from "../dtos/EmployeeDto";
@@ -9,7 +8,8 @@ import TeamDto from "../dtos/TeamDto";
 import CompanyDto from "../dtos/CompanyDto";
 import { Company } from "../models/Company";
 import moment from "moment";
-import { format } from "path";
+import AvgSalaryDto from "../dtos/AvgSalaryDto";
+import CustomMapper from "../utilities/mapper/CustomMapper";
 
 export class EmployeeService {
 
@@ -79,24 +79,16 @@ export class EmployeeService {
 
     }
 
-    async editEmployee(employeeId: number, managerId: number, teamId: number, firstName: string, lastName: string, username: string, email: string, position: string, salary: number) {
+    async editEmployee(empDto: EmployeeDto) {
+        const emp = mapper.map(empDto, EmployeeDto, Employee);
+        emp.startDate = new Date();
+
         const toEdit = await AppDataSource
             .getRepository(Employee)
-            .createQueryBuilder()
-            .update()
-            .set({
-                managerId: managerId,
-                teamId: teamId,
-                firstName: firstName,
-                lastName: lastName,
-                username: username,
-                email: email,
-                position: position,
-                salary: salary,
-            })
-            .where("id=:id", { id: employeeId })
-            .execute()
-        return toEdit;
+            .save(emp)
+
+
+        return mapper.map(emp, Employee, EmployeeDto);
     }
 
     async deleteEmployee(employeeId: number) {
@@ -110,25 +102,14 @@ export class EmployeeService {
         return toDelete;
     }
 
-    async addEmployee(managerId: number, teamId: number, firstName: string, lastName: string, username: string, email: string, position: string, salary: number) {
-        const emp = await AppDataSource
+    async addEmployee(empDto: EmployeeDto) {
+        const emp = mapper.map(empDto, EmployeeDto, Employee);
+        emp.startDate = new Date();
+
+        const newEmp = await AppDataSource
             .getRepository(Employee)
-            .createQueryBuilder('emp')
-            .insert()
-            .into(Employee)
-            .values({
-                managerId: managerId,
-                teamId: teamId,
-                firstName: firstName,
-                lastName: lastName,
-                username: username,
-                email: email,
-                position: position,
-                salary: salary,
-                startDate: () => "CURRENT_DATE"
-            })
-            .execute()
-        return emp;
+            .save(emp)
+        return mapper.map(newEmp, Employee, EmployeeDto);
     }
 
     async expInCompany(companyName: string) {
@@ -146,20 +127,22 @@ export class EmployeeService {
             // .addGroupBy("emps.id")
             .getMany();
 
-        return exp.map(emp=>mapper.map(emp,Employee,EmployeeDto));
+        return exp.map(emp => mapper.map(emp, Employee, EmployeeDto));
     }
 
     async avgSalary() {
         const avg = await AppDataSource
             .getRepository(Employee)
             .createQueryBuilder("emps")
-            .innerJoin('emps.team', 'team')
-            .select(`team.department`)
-            .addSelect('AVG(emps.salary) AS avg_salary')
+            .innerJoinAndSelect('emps.team', 'team')
+            .select(`team.department as department`)
+            .addSelect('AVG(emps.salary) AS avgSalary')
             .groupBy('team.department')
-            .getRawMany()
+            .getRawMany();
 
-        return avg;
+        let dtoAvgSalArr:Array<AvgSalaryDto>=[];
+         avg.forEach(dep=>dtoAvgSalArr.push(CustomMapper.mapAvgSalaryToAvgSalaryDto(dep)));
+         return dtoAvgSalArr;
 
     }
 
@@ -179,7 +162,7 @@ export class EmployeeService {
             // .addGroupBy("manager_id")
             .getMany()
 
-        return team.map(emp=>mapper.map(emp,Employee,EmployeeDto))
+        return team.map(emp => mapper.map(emp, Employee, EmployeeDto))
     }
 
     async filterEmployees(country: string, years: number) {
@@ -225,6 +208,6 @@ export class EmployeeService {
             .where('emp.id=:id', { id: employeeId })
             .getOne();
 
-        return mapper.map(employee,Employee,EmployeeDto);
+        return mapper.map(employee, Employee, EmployeeDto);
     }
 }

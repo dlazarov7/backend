@@ -1,5 +1,6 @@
 import * as express from "express";
 import { CompanyService } from "../services/CompanyService";
+import CompanyDto from "../dtos/CompanyDto";
 export class CompanyControler {
 
     router: express.Router;
@@ -27,10 +28,9 @@ export class CompanyControler {
 
     editCompany = async (req: express.Request, res: express.Response) => {
         try {
-            const { newName, newCountry } = req.body;
-            const companyId = parseInt(req.body.companyId);
-            const editedCompany = await CompanyService.getInstance().editCompany(companyId, String(newName), String(newCountry));
-            res.status(200).send("Successfully edited company");
+            const companyDto= req.body as CompanyDto;
+            const editedCompany = await CompanyService.getInstance().editCompany(companyDto);
+            res.status(200).send(editedCompany);
         } catch (error) {
             res.send(error);
         }
@@ -38,9 +38,9 @@ export class CompanyControler {
 
     addCompany = async (req: express.Request, res: express.Response) => {
         try {
-            const { companyName, countryName } = req.body;
-            const company = await CompanyService.getInstance().addCompany(String(companyName), String(countryName));
-            res.status(200).send("Successfully added company");
+            const companyDto=req.body as CompanyDto;
+            const company = await CompanyService.getInstance().addCompany(companyDto);
+            res.status(200).send(company);
         } catch (error) {
             res.send(error);
         }

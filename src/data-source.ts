@@ -13,6 +13,7 @@ export const AppDataSource = new DataSource({
     database: "company-teams-management",
     synchronize: false,
     logging: true,
+    //cache:true,
     entities: [Employee, Team, Company],
     migrations: ["src/migrations/*.ts","src/seeds/*.ts"],
     migrationsTableName: "migrations",

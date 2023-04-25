@@ -17,7 +17,7 @@ export default class EmployeeDto {
     @AutoMap()
     lastName: string;
 
-    fullName: string;
+    fullName?: string;
 
     @AutoMap()
     username: string;

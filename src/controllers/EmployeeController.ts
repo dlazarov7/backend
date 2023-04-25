@@ -1,5 +1,6 @@
 import * as express from "express";
 import { EmployeeService } from "../services/EmployeeService"
+import EmployeeDto from "../dtos/EmployeeDto";
 
 export class EmployeeController {
 
@@ -33,10 +34,9 @@ export class EmployeeController {
 
     editEmployee = async (req: express.Request, res: express.Response) => {
         try {
-            const { managerId, teamId, salary, employeeId } = req.body;
-            const { firstName, lastName, username, email, position } = req.body;
-            const emp = await EmployeeService.getInstance().editEmployee(Number(employeeId), Number(managerId), Number(teamId), firstName, lastName, username, email, position, Number(salary));
-            res.status(200).send("Successfully edited employee");
+            const empDto= req.body as EmployeeDto;
+            const emp = await EmployeeService.getInstance().editEmployee(empDto);
+            res.status(200).send(empDto);
         } catch (error) {
             res.send(error);
         }
@@ -53,11 +53,10 @@ export class EmployeeController {
 
     addEmployee = async (req: express.Request, res: express.Response) => {
         try {
-            const { managerId, teamId, salary } = req.body;
-            const { firstName, lastName, username, email, position } = req.body;
-            //const startDate:Date = req.body.startDate;
-            const emp = await EmployeeService.getInstance().addEmployee(Number(managerId), Number(teamId), firstName, lastName, username, email, position, Number(salary));
-            res.status(200).send("Successfully added employee");
+            
+            const empDto=req.body as EmployeeDto;
+            const emp = await EmployeeService.getInstance().addEmployee(empDto);
+            res.status(200).send(emp);
         } catch (error) {
             res.send(error);
         }

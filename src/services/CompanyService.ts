@@ -30,29 +30,21 @@ export class CompanyService {
         return toDelete;
     }
 
-    async editCompany(companyId: number, newName: string, newCountry: string) {
-        const company = await AppDataSource
+    async editCompany(companyDto: CompanyDto) {
+        const company = mapper.map(companyDto, CompanyDto, Company)
+        const companyToEdit = await AppDataSource
             .getRepository(Company)
-            .createQueryBuilder("company")
-            .update()
-            .set({ name: newName, country: newCountry })
-            .where("id=:id", { id: companyId })
-            .execute();
-        return company;
+            .save(company)
+        return mapper.map(companyToEdit, Company, CompanyDto);
     }
 
-    async addCompany(companyName: string, countryName: string) {
-        const company = await AppDataSource
+    async addCompany(companyDto: CompanyDto) {
+        const company = mapper.map(companyDto, CompanyDto, Company);
+        const newCompany = await AppDataSource
             .getRepository(Company)
-            .createQueryBuilder("company")
-            .insert()
-            .into(Company)
-            .values({
-                name: companyName,
-                country: countryName
-            })
-            .execute();
-        return company;
+            .save(company)
+
+        return mapper.map(newCompany, Company, CompanyDto);
     }
 
     async getCompanyById(comapanyId: number) {
