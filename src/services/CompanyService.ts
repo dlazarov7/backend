@@ -60,7 +60,8 @@ export class CompanyService {
             .getRepository(Company)
             .createQueryBuilder('company')
             .where("company.name=:id", { id: comapanyId })
-        return company
+            .getOne();
+        return mapper.map(company, Company, CompanyDto)
     }
 
     async getAllCompanies() {
@@ -69,6 +70,6 @@ export class CompanyService {
             .createQueryBuilder('company')
             .getMany();
 
-        return companies;
+        return companies.map(company => mapper.map(company, Company, CompanyDto));
     }
 }
