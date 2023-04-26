@@ -70,12 +70,14 @@ export class EmployeeService {
             .getRepository(Employee)
             .createQueryBuilder("emps")
             .innerJoin('emps.team', 'team')
-            .select(`team.department`)
-            .addSelect('AVG(emps.salary) AS avg_salary')
+            .select(`team.department AS department`)
+            .addSelect('AVG(emps.salary) AS avgSalary')
             .where("department=:name", { name: depName })
             .groupBy('team.department')
-            .getRawMany()
-        return depAvgSal;
+            .getRawOne()
+            
+           let avgSal=(CustomMapper.mapAvgSalaryToAvgSalaryDto(depAvgSal));
+            return avgSal;
 
     }
 
