@@ -11,16 +11,16 @@ export class EmployeeController {
         this.initializeRoutes();
     }
     private initializeRoutes() {
-        this.router.get("/filter/employees", this.filterEmployees);
-        this.router.get('/team/info', this.teamInfo);
-        this.router.get("/avg/salary", this.avgSalary);
-        this.router.get('/employees/company', this.expInCompany);
-        this.router.get("/getAllEmployees", this.getAllEmployees);
-        this.router.get("/getEmployeeById", this.getEmployeeById);
-        this.router.post("/employee/add", this.addEmployee);
-        this.router.delete("/employee/delete", this.deleteEmployee);
-        this.router.put("/employee/edit", this.editEmployee);
-        this.router.get("/department/avg/salary", this.departmentAvgSalary);
+        this.router.get("/filter/employees", this.filterEmployees); //done
+        this.router.get('/team/info', this.teamInfo); //done
+        this.router.get("/avg/salary", this.avgSalary); //done
+        this.router.get('/employees/company', this.expInCompany); //done
+        this.router.get("/getAllEmployees", this.getAllEmployees); //done
+        this.router.get("/getEmployeeById", this.getEmployeeById); //done
+        this.router.post("/employee/add", this.addEmployee); //done
+        this.router.delete("/employee/delete", this.deleteEmployee);//done
+        this.router.put("/employee/edit", this.editEmployee); //done
+        this.router.get("/department/avg/salary", this.departmentAvgSalary); // done
     }
 
     departmentAvgSalary = async (req: express.Request, res: express.Response) => {
@@ -44,10 +44,10 @@ export class EmployeeController {
 
     deleteEmployee = async (req: express.Request, res: express.Response) => {
         try {
-            const emp = await EmployeeService.getInstance().deleteEmployee(Number(req.body.employeeId));
-            res.status(200).send("Successfully deleted employee");
-        } catch (error) {
-            res.send(error);
+            const emp = await EmployeeService.getInstance().deleteEmployee(Number(req.body.id));
+            res.send(`Successfully deleted employee with id=${req.body.id}`);
+        } catch (err) {
+            res.send(`Id: ${req.body.id} - is wrong or does not exist`);
         }
     }
 

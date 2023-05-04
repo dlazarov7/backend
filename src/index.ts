@@ -4,8 +4,10 @@ import bodyParser from "body-parser";
 import { MainRouter } from "./router/MainRouter";
 import promiseRouter from "express-promise-router";
 import log4js from "log4js";
+import cors from "cors";
 
 const app = express();
+app.use(cors())
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(json());

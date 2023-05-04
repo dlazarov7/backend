@@ -28,6 +28,9 @@ export default class EmployeeDto {
     @AutoMap()
     salary: number;
 
+    @AutoMap()
+    position:string;
+
     @AutoMap(()=>Date)
     startDate: string;
 

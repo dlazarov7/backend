@@ -93,13 +93,13 @@ export class EmployeeService {
         return mapper.map(emp, Employee, EmployeeDto);
     }
 
-    async deleteEmployee(employeeId: number) {
+    async deleteEmployee(id: number) {
         const toDelete = await AppDataSource
             .getRepository(Employee)
             .createQueryBuilder()
             .delete()
             .from(Employee)
-            .where("id=:id", { id: employeeId })
+            .where("id=:id", { id: id })
             .execute()
         return toDelete;
     }
@@ -114,7 +114,7 @@ export class EmployeeService {
         return mapper.map(newEmp, Employee, EmployeeDto);
     }
 
-    async expInCompany(companyName: string) {
+    async expInCompany(name: string) {
         const exp = await AppDataSource
             .getRepository(Employee)
             .createQueryBuilder('emps')
@@ -124,7 +124,7 @@ export class EmployeeService {
             // .addSelect("emps.manager_id")
             // .addSelect(`concat(emps.first_name||' '||emps.last_name) AS fullName`)
             .where(`(( DATE_PART('year', CURRENT_DATE) - DATE_PART('year', "startDate")) * 12 + (DATE_PART('month', CURRENT_DATE) - DATE_PART('month', "startDate")))>=6 `)
-            .andWhere(`company.name=:name`, { name: companyName })
+            .andWhere(`company.name=:name`, { name: name })
             // .groupBy(`fullName`)
             // .addGroupBy("emps.id")
             .getMany();
@@ -152,7 +152,7 @@ export class EmployeeService {
         const team = await AppDataSource
             .getRepository(Employee)
             .createQueryBuilder("emps")
-            .innerJoin("emps.team", 'team')
+            .innerJoinAndSelect("emps.team", 'team')
             // .select(`team.name`)
             // //.addSelect(`concat("first_name"||' '||"last_name") AS "fullName"`)
             // .addSelect(`emps.id`)
@@ -207,6 +207,8 @@ export class EmployeeService {
         const employee = await AppDataSource
             .getRepository(Employee)
             .createQueryBuilder("emp")
+            .innerJoinAndSelect("emp.team", "team")
+            .innerJoinAndSelect("team.company", "company")
             .where('emp.id=:id', { id: employeeId })
             .getOne();
 
