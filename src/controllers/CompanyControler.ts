@@ -1,6 +1,7 @@
 import * as express from "express";
 import { CompanyService } from "../services/CompanyService";
 import CompanyDto from "../dtos/CompanyDto";
+
 export class CompanyControler {
 
     router: express.Router;
@@ -10,17 +11,17 @@ export class CompanyControler {
         this.initializeRoutes()
     }
     private initializeRoutes() {
-        this.router.get("/allCompanies", this.getAllCompanies);
-        this.router.get("/getCompanyByid", this.getCompanyById);
-        this.router.post("/addCompany", this.addCompany);
-        this.router.put("/editCompany", this.editCompany);
+        this.router.get("/allCompanies", this.getAllCompanies); //done
+        this.router.get("/getCompanyById", this.getCompanyById);
+        this.router.post("/company/add", this.addCompany);
+        this.router.put("/company/edit", this.editCompany);
         this.router.delete("/company/delete", this.deleteCompany);
     }
 
     deleteCompany = async (req: express.Request, res: express.Response) => {
         try {
-            const editedCompany = await CompanyService.getInstance().deleteCompany(String(req.body.companyName));
-            res.status(200).send('Successfully deleted company');
+            const editedCompany = await CompanyService.getInstance().deleteCompany(String(req.body.id));
+            res.status(200).send(`Successfully deleted company with id=${req.body.id}` );
         } catch (error) {
             res.send(error);
         }

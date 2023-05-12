@@ -1,6 +1,5 @@
 import { AutoMap } from "@automapper/classes";
 import CompanyDto from "./CompanyDto";
-import EmployeeDto from "./EmployeeDto";
 
 export default class TeamDto{
     @AutoMap()

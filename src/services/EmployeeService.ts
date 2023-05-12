@@ -1,12 +1,12 @@
 import { AppDataSource } from "../data-source";
 import { Employee } from "../models/Employee";
 import { Team } from "../models/Team";
+import { Company } from "../models/Company";
 import { mapper } from "../utilities/mapper/AutoMapper";
 import { createMap, forMember, mapFrom } from "@automapper/core";
 import EmployeeDto from "../dtos/EmployeeDto";
 import TeamDto from "../dtos/TeamDto";
 import CompanyDto from "../dtos/CompanyDto";
-import { Company } from "../models/Company";
 import moment from "moment";
 import AvgSalaryDto from "../dtos/AvgSalaryDto";
 import CustomMapper from "../utilities/mapper/CustomMapper";
@@ -75,9 +75,9 @@ export class EmployeeService {
             .where("department=:name", { name: depName })
             .groupBy('team.department')
             .getRawOne()
-            
-           let avgSal=(CustomMapper.mapAvgSalaryToAvgSalaryDto(depAvgSal));
-            return avgSal;
+
+        let avgSal = (CustomMapper.mapAvgSalaryToAvgSalaryDto(depAvgSal));
+        return avgSal;
 
     }
 
@@ -142,9 +142,9 @@ export class EmployeeService {
             .groupBy('team.department')
             .getRawMany();
 
-        let dtoAvgSalArr:Array<AvgSalaryDto>=[];
-         avg.forEach(dep=>dtoAvgSalArr.push(CustomMapper.mapAvgSalaryToAvgSalaryDto(dep)));
-         return dtoAvgSalArr;
+        let dtoAvgSalArr: Array<AvgSalaryDto> = [];
+        avg.forEach(dep => dtoAvgSalArr.push(CustomMapper.mapAvgSalaryToAvgSalaryDto(dep)));
+        return dtoAvgSalArr;
 
     }
 

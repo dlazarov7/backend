@@ -19,14 +19,14 @@ export class CompanyService {
         return this.instance;
     }
 
-    async deleteCompany(companyName: string) {
+    async deleteCompany(id: string) {
         const toDelete = await AppDataSource
             .getRepository(Company)
             .createQueryBuilder()
             .delete()
             .from(Company)
-            .where("name=:name", { name: companyName })
-            .execute()
+            .where("id=:id", { id: id })
+            .execute();
         return toDelete;
     }
 
@@ -42,16 +42,16 @@ export class CompanyService {
         const company = mapper.map(companyDto, CompanyDto, Company);
         const newCompany = await AppDataSource
             .getRepository(Company)
-            .save(company)
+            .save(company);
 
         return mapper.map(newCompany, Company, CompanyDto);
     }
 
-    async getCompanyById(comapanyId: number) {
+    async getCompanyById(id: number) {
         const company = await AppDataSource
             .getRepository(Company)
             .createQueryBuilder('company')
-            .where("company.name=:id", { id: comapanyId })
+            .where("company.id=:id", { id: id })
             .getOne();
         return mapper.map(company, Company, CompanyDto)
     }

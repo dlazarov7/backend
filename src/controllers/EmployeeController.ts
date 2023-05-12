@@ -48,7 +48,7 @@ export class EmployeeController {
             res.send(`Successfully deleted employee with id=${req.body.id}`);
         } catch (err) {
             res.send(`Id: ${req.body.id} - is wrong or does not exist`);
-        }
+        }   
     }
 
     addEmployee = async (req: express.Request, res: express.Response) => {

@@ -15,5 +15,5 @@
 
    },
    "exclude": ["node_modules"],
-   "include": ["./src/**/*.ts"]
+   "include": ["./src/**/*.ts", "src/seeds/1683724321314-SeedColumnPassword.ts"]
 }
