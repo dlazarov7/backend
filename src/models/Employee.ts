@@ -64,6 +64,10 @@ export class Employee extends BaseEntity {
     @AutoMap(() => Date)
     endDate: Date
 
+    @Column()
+    @AutoMap()
+    password:string;
+
     @ManyToOne(() => Team)
     @JoinColumn({
         name: "team_id"

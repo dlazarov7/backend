@@ -36,6 +36,7 @@ export default class EmployeeDto {
 
     @AutoMap(()=>Date)
     endDate: string;
+
     
     @AutoMap(()=>TeamDto)
     team:TeamDto;

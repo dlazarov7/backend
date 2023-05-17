@@ -1,6 +1,7 @@
 import * as express from "express";
 import { LoginService } from "../services/LoginService";
-import { stringify } from "querystring";
+import EmployeeDto from "../dtos/EmployeeDto";
+import EmployeeRegister from "../dtos/EmployeeRegisterDto";
 
 export class LoginControler{
     router:express.Router;
@@ -16,7 +17,8 @@ export class LoginControler{
 
     userAuthentication= async (req:express.Request,res:express.Response)=>{
         try {
-            const responce = await LoginService.getInstance().userAuthentication(String(req.body.email),String(req.body.password));
+            const userData =req.body as EmployeeRegister;
+            const responce = await LoginService.getInstance().userAuthentication(userData);
             if (responce) {
                 res.status(200).send(responce)
             }else(

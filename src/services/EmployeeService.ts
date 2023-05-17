@@ -10,6 +10,8 @@ import CompanyDto from "../dtos/CompanyDto";
 import moment from "moment";
 import AvgSalaryDto from "../dtos/AvgSalaryDto";
 import CustomMapper from "../utilities/mapper/CustomMapper";
+import EmployeeRegisterDto from "../dtos/EmployeeRegisterDto";
+import bcript from 'bcrypt';
 
 export class EmployeeService {
 
@@ -60,6 +62,7 @@ export class EmployeeService {
             createMap(mapper, Team, TeamDto);
             createMap(mapper, CompanyDto, Company);
             createMap(mapper, Company, CompanyDto);
+            createMap(mapper, EmployeeRegisterDto, Employee);
 
         }
         return this.instance;
@@ -90,7 +93,7 @@ export class EmployeeService {
             .save(emp)
 
 
-        return mapper.map(emp, Employee, EmployeeDto);
+        return mapper.map(toEdit, Employee, EmployeeDto);
     }
 
     async deleteEmployee(id: number) {
@@ -104,10 +107,28 @@ export class EmployeeService {
         return toDelete;
     }
 
-    async addEmployee(empDto: EmployeeDto) {
-        const emp = mapper.map(empDto, EmployeeDto, Employee);
+    async registerEmployee(empDto: EmployeeRegisterDto) {
+
+        const saltRounds=10;
+        const hashedPassword=await bcript.hash(empDto.password,saltRounds);
+
+        empDto.password=hashedPassword;
+        const emp = mapper.map(empDto, EmployeeRegisterDto, Employee);
         emp.startDate = new Date();
 
+        
+        const regEmp = await AppDataSource
+            .getRepository(Employee)
+            .save(emp);
+
+
+        return mapper.map(regEmp, Employee, EmployeeDto);
+    }
+
+    async addEmployee(empDto: EmployeeDto) {
+        const emp = mapper.map(empDto, EmployeeDto, Employee);
+
+        emp.startDate = new Date();
         const newEmp = await AppDataSource
             .getRepository(Employee)
             .save(emp)

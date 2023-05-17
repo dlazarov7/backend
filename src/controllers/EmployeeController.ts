@@ -1,6 +1,7 @@
 import * as express from "express";
 import { EmployeeService } from "../services/EmployeeService"
 import EmployeeDto from "../dtos/EmployeeDto";
+import EmployeeRegisterDto from "../dtos/EmployeeRegisterDto";
 
 export class EmployeeController {
 
@@ -17,10 +18,20 @@ export class EmployeeController {
         this.router.get('/employees/company', this.expInCompany); //done
         this.router.get("/getAllEmployees", this.getAllEmployees); //done
         this.router.get("/getEmployeeById", this.getEmployeeById); //done
-        this.router.post("/employee/add", this.addEmployee); //done
+        this.router.put("/employee/add", this.addEmployee); //done
         this.router.delete("/employee/delete", this.deleteEmployee);//done
         this.router.put("/employee/edit", this.editEmployee); //done
         this.router.get("/department/avg/salary", this.departmentAvgSalary); // done
+        this.router.post("/employee/register", this.registerEmployee)
+    }
+    registerEmployee=async (req:express.Request,res:express.Response)=>{
+        try {
+            const emp=req.body as EmployeeRegisterDto;
+            const registration = await EmployeeService.getInstance().registerEmployee(emp);
+            res.status(200).send(registration)
+        } catch (error) {
+            res.send(error);
+        }
     }
 
     departmentAvgSalary = async (req: express.Request, res: express.Response) => {
