@@ -13,28 +13,31 @@ export class LoginService {
     static getInstance() {
         if (!this.instance) {
             this.instance = new LoginService();
-            createMap(mapper,EmployeeRegisterDto,Employee);
-            createMap(mapper,EmployeeDto,Employee);
-            createMap(mapper,Employee,EmployeeDto);
+            createMap(mapper, EmployeeRegisterDto, Employee);
+            createMap(mapper, EmployeeDto, Employee);
+            createMap(mapper, Employee, EmployeeDto);
         }
         return this.instance;
     }
 
     async userAuthentication(userData: EmployeeRegisterDto) {
 
-        const hashedPassword = await bcrypt.hash(userData.password, 10);
-        userData.password = hashedPassword;
-
-        const user=mapper.map(userData,EmployeeRegisterDto,Employee);
+        //const user=mapper.map(userData,EmployeeRegisterDto,Employee);
 
         const result = await AppDataSource
             .getRepository(Employee)
             .createQueryBuilder("emp")
-            .where('emp.email=:email', { email: user.email })
-            .andWhere('emp.password=:password', { password: user.password })
+            .where('emp.email=:email', { email: userData.email })
             .getOne();
 
-        return mapper.map(result,Employee,EmployeeDto);
+        if (!result) {
+            return "User Not Found";
+        }
+        
+        return bcrypt.compareSync(userData.password, result.password) ?
+            mapper.map(result, Employee, EmployeeDto)
+            : "Wrong password";
+
     }
 
     async isUserLogedgout() {

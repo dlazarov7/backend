@@ -110,7 +110,7 @@ export class EmployeeService {
     async registerEmployee(empDto: EmployeeRegisterDto) {
 
         const saltRounds=10;
-        const hashedPassword=await bcript.hash(empDto.password,saltRounds);
+        const hashedPassword= bcript.hashSync(empDto.password,saltRounds);
 
         empDto.password=hashedPassword;
         const emp = mapper.map(empDto, EmployeeRegisterDto, Employee);
